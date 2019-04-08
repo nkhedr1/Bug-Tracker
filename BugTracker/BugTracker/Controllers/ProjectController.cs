@@ -35,6 +35,7 @@ namespace BugTracker.Controllers
             currentProject = new Project();
             currentProject.Name = projectData.Name;
             currentProject.Id = projectData.Id;
+            currentProject.DateCreated = DateTime.Today;
             DbContext.Projects.Add(currentProject);
             DbContext.SaveChanges();
             return View();
@@ -51,7 +52,8 @@ namespace BugTracker.Controllers
 
             var projectModel = new CreateProjectViewModel();
             projectModel.Name = projectToEdit.Name;
-
+            projectModel.DateCreated = projectToEdit.DateCreated;
+            projectModel.DateUpdated = projectToEdit.DateUpdated;
             return View(projectModel);
         }
 
@@ -62,7 +64,8 @@ namespace BugTracker.Controllers
             var projectToEdit = DbContext.Projects.FirstOrDefault(
                 project => project.Id == projectData.Id);
 
-            projectToEdit.Name = projectData.Name;          
+            projectToEdit.Name = projectData.Name;
+            projectToEdit.DateUpdated = DateTime.Today;
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProjectController.ListAllProjects));
         }
@@ -78,16 +81,12 @@ namespace BugTracker.Controllers
                                {
                                    Id = project.Id,
                                    Name = project.Name,
-                                   Users = project.Users                                
+                                   Users = project.Users,
+                                   DateUpdated = project.DateUpdated,
+                                   DateCreated = project.DateCreated
                                }).ToList();
 
-            //Project currentProject;
-
-            //currentProject = new Project();
-            //currentProject.Name = projectData.Name;
-            //currentProject.Id = projectData.Id;
-            //DbContext.Projects.Add(currentProject);
-            //DbContext.SaveChanges();
+           
             return View(allProjects);
         }
 
