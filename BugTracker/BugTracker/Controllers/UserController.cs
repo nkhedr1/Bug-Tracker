@@ -55,9 +55,9 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult AssignUserRoles(string role1)
+        public ActionResult AssignUserRoles(string role1, ManageUsersViewModel formData)
         {
-          
+
             var currentUsers = (from user in DbContext.Users
                                 select new
                                 {
@@ -77,16 +77,16 @@ namespace BugTracker.Controllers
                                     Role = string.Join(",", p.RoleNames)
                                 });
 
-          //  var userToChangeRole = currentUsers.FirstOrDefault(user =>
-          //user.Id == id);
+            var userToChangeRole = currentUsers.FirstOrDefault(user =>
+          user.Id == formData.Id);
 
-          //  userToChangeRole.Role = currentRole;
+            userToChangeRole.Role = role1;
+            DbContext.SaveChanges();
 
-
-            return View();
+            return RedirectToAction(nameof(UserController.ManageUsers));
         }
 
-            public ActionResult Settings()
+        public ActionResult Settings()
         {
 
             var userId = User.Identity.GetUserId();

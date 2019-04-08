@@ -18,32 +18,30 @@
                     <div class="card-body">
                         <div>
                             <h5 class="card-title">User Role</h5>
-                            @*<span class="card-text">Name: @Model.FirstName</span>*@
-                            @*<span class="card-text">Email: @Model.Email</span>*@
                         </div>
 
                         @using (Html.BeginForm("AssignUserRoles", "User", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                         {
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="role" value="Admin" id="defaultCheck1">
+                                <input class="form-check-input" type="checkbox" name="role1" value="Admin" id="defaultCheck1">
                                 <label class="form-check-label" for="defaultCheck1">
                                     Admin
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="role" value="Developer" id="defaultCheck2">
+                                <input class="form-check-input" type="checkbox" name="role1" value="Developer" id="defaultCheck2">
                                 <label class="form-check-label" for="defaultCheck2">
                                     Developer
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="role" value="Project Manager" id="defaultCheck3">
+                                <input class="form-check-input" type="checkbox" name="role1" value="Project Manager" id="defaultCheck3">
                                 <label class="form-check-label" for="defaultCheck3">
                                     Project Manager
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="role" value="Submitter" id="defaultCheck4">
+                                <input class="form-check-input" type="checkbox" name="role1" value="Submitter" id="defaultCheck4">
                                 <label class="form-check-label" for="defaultCheck4">
                                     Submitter
                                 </label>
