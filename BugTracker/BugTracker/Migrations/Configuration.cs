@@ -61,8 +61,9 @@ namespace BugTracker.Migrations
             {
                 adminUser = new ApplicationUser();
                 adminUser.UserName = "admin@mybugtracker.com";
-                adminUser.Email = "admin@mybugtracker.com";
+                adminUser.Email = "admin@mybugtracker.com";                
                 userManager.Create(adminUser, "Password-1");
+                userManager.AddToRole(adminUser.Id, "Admin");
             }
             else
             {

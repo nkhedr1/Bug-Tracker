@@ -23,19 +23,75 @@ namespace BugTracker.Controllers
             return View();
         }
 
-        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult ManageUsers()
+        {
+
+            var currentUsers = (from user in DbContext.Users
+                                select new
+                                {
+                                    UserId = user.Id,
+                                    Username = user.UserName,
+                                    Name = user.FirstName,
+                                    RoleNames = (from userRole in user.Roles
+                                                 join role in DbContext.Roles on userRole.RoleId
+                                                 equals role.Id
+                                                 select role.Name)
+                                }).ToList().Select(p => new ManageUsersViewModel()
+
+                                {
+                                    Id = p.UserId,
+                                    FirstName = p.Name,
+                                    Email = p.Username,
+                                    Role = string.Join(",", p.RoleNames)
+                                });
+
+
+
+            return View(currentUsers);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult AssignUserRoles()
         {
             return View();
         }
 
-        //[HttpPost]
-        //public ActionResult ManageUsers()
-        //{
-        //    return View();
-        //}
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult AssignUserRoles(string role1)
+        {
+          
+            var currentUsers = (from user in DbContext.Users
+                                select new
+                                {
+                                    UserId = user.Id,
+                                    Username = user.UserName,
+                                    Name = user.FirstName,
+                                    RoleNames = (from userRole in user.Roles
+                                                 join role in DbContext.Roles on userRole.RoleId
+                                                 equals role.Id
+                                                 select role.Name)
+                                }).ToList().Select(p => new ManageUsersViewModel()
 
-        public ActionResult Settings()
+                                {
+                                    Id = p.UserId,
+                                    FirstName = p.Name,
+                                    Email = p.Username,
+                                    Role = string.Join(",", p.RoleNames)
+                                });
+
+          //  var userToChangeRole = currentUsers.FirstOrDefault(user =>
+          //user.Id == id);
+
+          //  userToChangeRole.Role = currentRole;
+
+
+            return View();
+        }
+
+            public ActionResult Settings()
         {
 
             var userId = User.Identity.GetUserId();
