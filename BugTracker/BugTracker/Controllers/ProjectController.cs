@@ -38,7 +38,7 @@ namespace BugTracker.Controllers
             currentProject.DateCreated = DateTime.Today;
             DbContext.Projects.Add(currentProject);
             DbContext.SaveChanges();
-            return View();
+            return RedirectToAction(nameof(ProjectController.ListAllProjects));
         }
 
         [HttpGet]

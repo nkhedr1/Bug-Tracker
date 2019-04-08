@@ -17,11 +17,6 @@ namespace BugTracker.Controllers
         {
             DbContext = new ApplicationDbContext();
         }
-        // GET: User
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         [Authorize(Roles = "Admin")]
         public ActionResult ManageUsers()
