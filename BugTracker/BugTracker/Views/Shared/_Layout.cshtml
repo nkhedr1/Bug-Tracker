@@ -94,6 +94,16 @@
                 </li>
             }
 
+            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListAllTickets", "Ticket")">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span>All Tickets</span>
+                    </a>
+                </li>
+            }
+
         </ul>
         @RenderBody()
 

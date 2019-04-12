@@ -1,5 +1,6 @@
 ﻿using BugTracker.Models;
 using BugTracker.Models.Domain;
+using BugTracker.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -22,20 +23,21 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Submitter")]
         public ActionResult CreateTicket()
         {
+
             var ticketTypes = (from type in DbContext.TicketTypes
-                             select type
+                               select type
                              ).ToList();
 
             ViewBag.AllTicketTypes = ticketTypes;
 
             var ticketPriorities = (from priority in DbContext.TicketPriorities
-                               select priority
+                                    select priority
                              ).ToList();
 
             ViewBag.AllTicketPriorities = ticketPriorities;
 
             var ticketStatuses = (from status in DbContext.TicketStatuses
-                                    select status
+                                  select status
                             ).ToList();
 
             ViewBag.AllTicketStatuses = ticketStatuses;
@@ -62,6 +64,7 @@ namespace BugTracker.Controllers
             currentTicket.Title = formData["Title"];
             currentTicket.Description = formData["Description"];
             currentTicket.ProjectId = id;
+            currentTicket.DateCreated = DateTime.Today;
             currentTicket.TicketPriorityId = Int32.Parse(ticketPriorityId);
             currentTicket.TicketTypeId = Int32.Parse(ticketTypeId);
             currentTicket.TicketStatusId = ticketDefaultStatus.Id;
@@ -71,6 +74,30 @@ namespace BugTracker.Controllers
             DbContext.SaveChanges();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize(Roles = "Admin, Project Manager")]
+        public ActionResult ListAllTickets()
+        {
+
+            var allTickets =
+                  (from ticket in DbContext.Tickets
+                   select new ViewAllTicketsViewModel
+                   {
+                       CreatedBy = ticket.CreatedBy,
+                       AssignedTo = ticket.AssignedTo,
+                       Title = ticket.Title,
+                       Description = ticket.Description,
+                       DateCreated = ticket.DateCreated,
+                       DateUpdated = ticket.DateUpdated,
+                       TicketStatus = ticket.TicketStatus,
+                       TicketPriority = ticket.TicketPriority,
+                       TicketType = ticket.TicketType,
+                       Project = ticket.Project
+
+                   }).ToList();
+
+            return View(allTickets);
         }
     }
 }

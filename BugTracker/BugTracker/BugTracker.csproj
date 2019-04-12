@@ -197,6 +197,7 @@
     <Compile Include="Models\ViewModels\ManageUsersViewModel.cs" />
     <Compile Include="Models\ViewModels\RoleViewModel.cs" />
     <Compile Include="Models\ViewModels\UserSettingsViewModel.cs" />
+    <Compile Include="Models\ViewModels\ViewAllTicketsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -1982,6 +1983,7 @@
     <Content Include="Views\Project\AssignUsersToPrjoect.cshtml" />
     <Content Include="Views\Project\ListMyProjects.cshtml" />
     <Content Include="Views\Ticket\CreateTicket.cshtml" />
+    <Content Include="Views\Ticket\ListAllTickets.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

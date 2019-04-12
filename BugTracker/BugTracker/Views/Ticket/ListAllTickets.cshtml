@@ -1,0 +1,66 @@
+﻿@model List<ViewAllTicketsViewModel>
+@{
+    ViewBag.Title = "ListAllTickets";
+}
+
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">All Tickets</li>
+        </ol>
+        <!-- DataTables Example -->
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <table class="table table-striped" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Ticket Title</th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">Date Created</th>
+                            <th scope="col">Date Updated</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Created By</th>
+                            <th scope="col">Assigned To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model)
+                        {
+                        <tr>
+                            <th scope="row"></th>
+                            <td>@ticket.Title</td>
+                            <td>@ticket.Project.Name</td>
+                            <td>@ticket.DateCreated</td>
+                            <td>@ticket.DateUpdated</td>
+                            <td>@ticket.TicketType.Name</td>
+                            <td>@ticket.TicketStatus.Name</td>
+                            <td>@ticket.TicketPriority.Name</td>
+                            <td>@ticket.CreatedBy.UserName</td>
+                            @if (ticket.AssignedTo == null)
+                            {
+                                <td>Not Assigned</td>
+                            }
+                            else
+                            {
+                                <td>@ticket.AssignedTo.UserName</td>
+                            }
+
+                            @*<td><a href="@Url.Action("EditProject", "Project", new {id = project.Id})">Edit Project</a></td>
+        <td><a href="@Url.Action("AssignUsersToPrjoect", "Project", new {id = project.Id})">Edit Members</a></td>*@
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
