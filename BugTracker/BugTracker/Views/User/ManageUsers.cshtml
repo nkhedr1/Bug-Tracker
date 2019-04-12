@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ManageUsersViewModel>
+﻿@model List<ManageUsersViewModel>
 @{
     ViewBag.Title = "ManageUsers";
 }
@@ -32,8 +32,8 @@
                                         <th scope="row"></th>
                                         <td>@user.FirstName</td>
                                         <td>@user.Email</td>
-                                        <td>@user.Role</td>
-                                        <td><a href="@Url.Action("AssignUserRoles", "User", new {id = user.Id, role = user.Role})">Edit Role</a></td>
+                                        <td>@string.Join(",", user.CurrentRoles)</td>
+                                        <td><a href="@Url.Action("AssignUserRoles", "User", new {id = user.Id})">Edit Role</a></td>
                                     </tr>
                                 }
                             </tbody>

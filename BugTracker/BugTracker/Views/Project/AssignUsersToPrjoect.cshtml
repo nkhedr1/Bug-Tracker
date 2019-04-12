@@ -1,0 +1,95 @@
+﻿@model Project
+@{
+    ViewBag.Title = "AssignUsersToPrjoect";
+}
+
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">All Projects / Assign Users to Projects</li>
+        </ol>
+        <!-- DataTables Example -->
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <table class="table table-striped" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Members</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <th scope="row"></th>
+                                <td>@user.FirstName</td>
+                                <td>@user.Email</td>
+                                <td><a href="@Url.Action("AssignUsersToPrjoect", "Project", new {userId = user.Id, projectId = Model.Id})">Add User</a></td>
+                                <td><a href="@Url.Action("RemoveUserFromProject", "Project", new {userId = user.Id, projectId = Model.Id})">Remove User</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <table class="table table-striped" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th scope="col">All Users</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Roles</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in ViewBag.AllUsers)
+                        {
+                            <tr>
+                                <th scope="row"></th>
+                                <td>@user.FirstName</td>
+                                <td>@user.Email</td>
+                                <td>@string.Join(",", user.CurrentRoles)</td>
+                                <td><a href="@Url.Action("AddUsersToProject", "Project", new {userId = user.Id, projectId = Model.Id})">Add User</a></td>
+                                <td><a href="@Url.Action("RemoveUserFromProject", "Project", new {userId = user.Id, projectId = Model.Id})">Remove User</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+

@@ -76,18 +76,88 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
             List<CreateProjectViewModel> allProjects;
 
-            allProjects = DbContext.Projects                            
+            allProjects = DbContext.Projects
                                .Select(project => new CreateProjectViewModel
                                {
                                    Id = project.Id,
                                    Name = project.Name,
-                                   Users = project.Users,
+                                   AssignedUsers = project.Users.Count,
                                    DateUpdated = project.DateUpdated,
                                    DateCreated = project.DateCreated
                                }).ToList();
 
-           
+
             return View(allProjects);
+        }
+
+        [Authorize(Roles = "Admin, Project Manager")]
+        public ActionResult AssignUsersToPrjoect(int id)
+        {
+            var projectToAdd = DbContext.Projects.FirstOrDefault(
+               project => project.Id == id);
+
+            var modelUser = (from user in DbContext.Users
+                             select new ManageUsersViewModel
+                             {
+                                 Id = user.Id,
+                                 FirstName = user.FirstName,
+                                 Email = user.Email,
+                                 CurrentRoles = (from userRoles in user.Roles
+                                                 join role in DbContext.Roles on userRoles.RoleId
+                                                 equals role.Id
+                                                 select role.Name).ToList()
+                             }).ToList();
+
+
+            ViewBag.AllUsers = modelUser;
+
+            return View(projectToAdd);
+        }
+
+        [Authorize(Roles = "Admin, Project Manager")]
+        public ActionResult AddUsersToProject(string userId, int projectId)
+        {
+            var projectToAddUsers = DbContext.Projects.FirstOrDefault(
+              project => project.Id == projectId);
+
+            var userToAdd = DbContext.Users.FirstOrDefault(
+               user => user.Id == userId);
+
+            projectToAddUsers.Users.Add(userToAdd);
+           
+            DbContext.SaveChanges();
+            return RedirectToAction(nameof(ProjectController.ListAllProjects));
+        }
+
+        [Authorize(Roles = "Admin, Project Manager")]
+        public ActionResult RemoveUserFromProject(string userId, int projectId)
+        {
+            var projectToAddUsers = DbContext.Projects.FirstOrDefault(
+              project => project.Id == projectId);
+
+            var userToRemove = DbContext.Users.FirstOrDefault(
+               user => user.Id == userId);
+
+            projectToAddUsers.Users.Remove(userToRemove);
+
+            DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(ProjectController.ListAllProjects));
+        }
+
+        [Authorize]
+        public ActionResult ListMyProjects()
+        {
+            var userId = User.Identity.GetUserId();
+
+            var currentUser = DbContext.Users.FirstOrDefault(
+              user => user.Id == userId);
+
+            List<Project> myProjects;
+
+            myProjects = currentUser.Projects.ToList();
+            
+            return View(myProjects);
         }
 
     }

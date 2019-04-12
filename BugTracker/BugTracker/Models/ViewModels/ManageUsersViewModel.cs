@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using BugTracker.Models.Domain;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace BugTracker.Models.ViewModels
         public string Id { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
-        public string Role { get; set; }
+        public List<string> CurrentRoles { get; set; }
+        public virtual List<Project> Projects { get; set; }
     }
 }

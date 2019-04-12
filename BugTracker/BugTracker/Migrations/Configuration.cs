@@ -1,6 +1,7 @@
 namespace BugTracker.Migrations
 {
     using BugTracker.Models;
+    using BugTracker.Models.Domain;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
@@ -71,6 +72,98 @@ namespace BugTracker.Migrations
                     .Users
                     .First(user => user.UserName == "admin@mybugtracker.com");
             }
+
+            if (!context.TicketTypes.Any(type => type.Name == "Bug"))
+            {
+                  TicketType ticketTypeBug = new TicketType()
+            {
+                Name = "Bug"
+            };
+            context.TicketTypes.Add(ticketTypeBug);
+
+            }
+
+            if (!context.TicketTypes.Any(type => type.Name == "Feature"))
+            {
+                TicketType ticketTypeFeature = new TicketType()
+                {
+                    Name = "Feature"
+                };
+                context.TicketTypes.Add(ticketTypeFeature);
+            }
+
+            if (!context.TicketTypes.Any(type => type.Name == "Database"))
+            {
+                TicketType ticketTypeDatabase = new TicketType()
+                {
+                    Name = "Database"
+                };
+                context.TicketTypes.Add(ticketTypeDatabase);
+            }
+
+            if (!context.TicketTypes.Any(type => type.Name == "Support"))
+            {
+                TicketType ticketTypeSupport = new TicketType()
+                {
+                    Name = "Support"
+                };
+                context.TicketTypes.Add(ticketTypeSupport);
+            }
+
+            if (!context.TicketPriorities.Any(priority => priority.Name == "Low"))
+            {
+                TicketPriority ticketPriorityLow = new TicketPriority()
+                {
+                    Name = "Low"
+                };
+                context.TicketPriorities.Add(ticketPriorityLow);
+            }
+
+            if (!context.TicketPriorities.Any(priority => priority.Name == "Medium"))
+            {
+                TicketPriority ticketPriorityMedium = new TicketPriority()
+                {
+                    Name = "Medium"
+                };
+                context.TicketPriorities.Add(ticketPriorityMedium);
+            }
+
+            if (!context.TicketPriorities.Any(priority => priority.Name == "High"))
+            {
+                TicketPriority ticketPriorityHigh = new TicketPriority()
+                {
+                    Name = "High"
+                };
+                context.TicketPriorities.Add(ticketPriorityHigh);
+            }
+
+            if (!context.TicketStatuses.Any(status => status.Name == "Open"))
+            {
+                TicketStatus ticketStatusOpen = new TicketStatus()
+                {
+                    Name = "Open"
+                };
+                context.TicketStatuses.Add(ticketStatusOpen);
+            }
+
+            if (!context.TicketStatuses.Any(status => status.Name == "Resolved"))
+            {
+                TicketStatus ticketStatusResolved = new TicketStatus()
+                {
+                    Name = "Resolved"
+                };
+                context.TicketStatuses.Add(ticketStatusResolved);
+            }
+
+            if (!context.TicketStatuses.Any(status => status.Name == "Rejected"))
+            {
+                TicketStatus ticketStatusRejected = new TicketStatus()
+                {
+                    Name = "Rejected"
+                };
+                context.TicketStatuses.Add(ticketStatusRejected);
+            }
+
         }
     }
 }

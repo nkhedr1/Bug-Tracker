@@ -1,6 +1,6 @@
-﻿@model List<CreateProjectViewModel>
+﻿@model List<Project>
 @{
-    ViewBag.Title = "ListAllProjects";
+    ViewBag.Title = "ListMyProjects";
 }
 
 <div id="content-wrapper">
@@ -10,7 +10,7 @@
             <li class="breadcrumb-item">
                 <a href="#">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active">Manage Users</li>
+            <li class="breadcrumb-item active">My Projects</li>
         </ol>
         <!-- DataTables Example -->
 
@@ -21,27 +21,21 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Project Name</th>
-                            <th scope="col">Number of Users</th>
-                            <th scope="col">Number of Tickets</th>
                             <th scope="col">Date Created</th>
                             <th scope="col">Date Updated</th>
-                            <th scope="col"></th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var project in Model)
                         {
-                        <tr>
-                            <th scope="row"></th>
-                            <td>@project.Name</td>
-                            <td>@project.AssignedUsers</td>
-                            <td>0</td>
-                            <td>@project.DateCreated</td>
-                            <td>@project.DateUpdated</td>
-                            <td><a href="@Url.Action("EditProject", "Project", new {id = project.Id})">Edit Project</a></td>
-                            <td><a href="@Url.Action("AssignUsersToPrjoect", "Project", new {id = project.Id})">Edit Members</a></td>
-                        </tr>
+                            <tr>
+                                <th scope="row"></th>
+                                <td>@project.Name</td>
+                                <td>@project.DateCreated</td>
+                                <td>@project.DateUpdated</td>
+                                <td><a href="@Url.Action("CreateTicket", "Ticket", new {id = project.Id})">Create Ticket</a></td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -49,4 +43,4 @@
         </div>
     </div>
 </div>
-<!-- /.container-fluid -->
+
