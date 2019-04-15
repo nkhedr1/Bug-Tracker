@@ -1984,6 +1984,9 @@
     <Content Include="Views\Project\ListMyProjects.cshtml" />
     <Content Include="Views\Ticket\CreateTicket.cshtml" />
     <Content Include="Views\Ticket\ListAllTickets.cshtml" />
+    <Content Include="Views\Ticket\ListMyTickets.cshtml" />
+    <Content Include="Views\Ticket\EditTicket.cshtml" />
+    <Content Include="Views\User\AssignDeveloperToTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

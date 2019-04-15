@@ -1,6 +1,7 @@
 ﻿@model List<ViewAllTicketsViewModel>
+
 @{
-    ViewBag.Title = "ListAllTickets";
+    ViewBag.Title = "ListMyTickets";
 }
 
 <div id="content-wrapper">
@@ -29,7 +30,6 @@
                             <th scope="col">Priority</th>
                             <th scope="col">Created By</th>
                             <th scope="col">Assigned To</th>
-                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,7 +53,6 @@
                                 {
                                     <td>@ticket.AssignedTo.UserName</td>
                                 }
-                                <td><a href="@Url.Action("EditTicket", "Ticket", new {id = ticket.Id})">Edit Ticket</a></td>
                             </tr>
                         }
                     </tbody>
@@ -62,4 +61,6 @@
         </div>
     </div>
 </div>
+
+
 

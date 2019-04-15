@@ -104,6 +104,16 @@
                 </li>
             }
 
+            @if (User.IsInRole("Submitter"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListMyTickets", "Ticket")">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span>My Tickets</span>
+                    </a>
+                </li>
+            }
+
         </ul>
         @RenderBody()
 
