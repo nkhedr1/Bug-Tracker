@@ -26,5 +26,13 @@ namespace BugTracker.Models.Domain
 
         public virtual ApplicationUser AssignedTo { get; set; }
         public string AssignedToId { get; set; }
+
+        public virtual List<Comment> Comments { get; set; }
+
+        public Ticket()
+        {
+            Comments = new List<Comment>();
+
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace BugTracker.Models
     {
         public virtual List<Project> Projects { get; set; }
         public string FirstName { get; set; }
+        public virtual List<Comment> Comments { get; set; }
 
         [InverseProperty(nameof(Ticket.CreatedBy))]
         public virtual List<Ticket> CreatedTickets { get; set; }
@@ -26,6 +27,7 @@ namespace BugTracker.Models
             Projects = new List<Project>();
             CreatedTickets = new List<Ticket>();
             AssignedTickets = new List<Ticket>();
+            Comments = new List<Comment>();
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -49,6 +51,7 @@ namespace BugTracker.Models
         public DbSet<TicketPriority> TicketPriorities { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<TicketStatus> TicketStatuses { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         public static ApplicationDbContext Create()
         {

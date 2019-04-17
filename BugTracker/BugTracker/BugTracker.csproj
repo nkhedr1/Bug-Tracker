@@ -184,6 +184,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Domain\Comment.cs" />
     <Compile Include="Models\Domain\Ticket.cs" />
     <Compile Include="Models\Domain\TicketPriority.cs" />
     <Compile Include="Models\Domain\TicketStatus.cs" />
@@ -1986,7 +1987,12 @@
     <Content Include="Views\Ticket\ListAllTickets.cshtml" />
     <Content Include="Views\Ticket\ListMyTickets.cshtml" />
     <Content Include="Views\Ticket\EditTicket.cshtml" />
-    <Content Include="Views\User\AssignDeveloperToTicket.cshtml" />
+    <Content Include="Views\Ticket\ListDeveloperTickets.cshtml" />
+    <Content Include="Views\Ticket\EditDeveloperTicket.cshtml" />
+    <Content Include="Views\Ticket\EditMySubmitterTicket.cshtml" />
+    <Content Include="Views\Ticket\AddCommentAdminsProjectManagers.cshtml" />
+    <Content Include="Views\Ticket\AddCommentDeveloper.cshtml" />
+    <Content Include="Views\Ticket\AddCommentSubmitter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

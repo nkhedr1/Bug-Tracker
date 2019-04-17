@@ -35,26 +35,27 @@
                     <tbody>
                         @foreach (var ticket in Model)
                         {
-                            <tr>
-                                <th scope="row"></th>
-                                <td>@ticket.Title</td>
-                                <td>@ticket.Project.Name</td>
-                                <td>@ticket.DateCreated</td>
-                                <td>@ticket.DateUpdated</td>
-                                <td>@ticket.TicketType.Name</td>
-                                <td>@ticket.TicketStatus.Name</td>
-                                <td>@ticket.TicketPriority.Name</td>
-                                <td>@ticket.CreatedBy.UserName</td>
-                                @if (ticket.AssignedTo == null)
-                                {
-                                    <td>Not Assigned</td>
-                                }
-                                else
-                                {
-                                    <td>@ticket.AssignedTo.UserName</td>
-                                }
-                                <td><a href="@Url.Action("EditTicket", "Ticket", new {id = ticket.Id})">Edit Ticket</a></td>
-                            </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>@ticket.Title</td>
+                            <td>@ticket.Project.Name</td>
+                            <td>@ticket.DateCreated</td>
+                            <td>@ticket.DateUpdated</td>
+                            <td>@ticket.TicketType.Name</td>
+                            <td>@ticket.TicketStatus.Name</td>
+                            <td>@ticket.TicketPriority.Name</td>
+                            <td>@ticket.CreatedBy.UserName</td>
+                            @if (ticket.AssignedTo == null)
+                            {
+                                <td>Not Assigned</td>
+                            }
+                            else
+                            {
+                                <td>@ticket.AssignedTo.UserName</td>
+                            }
+                            <td><a href="@Url.Action("EditTicket", "Ticket", new {id = ticket.Id})">Edit Ticket</a></td>
+                            <td><a href="@Url.Action("AddCommentAdminsProjectManagers", "Ticket", new {id = ticket.Id})">Add Comment</a></td>
+                        </tr>
                         }
                     </tbody>
                 </table>

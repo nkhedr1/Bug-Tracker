@@ -155,22 +155,5 @@ namespace BugTracker.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //[Authorize(Roles = "Admin, Project Manager")]
-        //public ActionResult AssignDeveloperToTicket(int id)
-        //{
-
-
-        //    var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-        //        ticket => ticket.Id == id);
-
-        //    var currentDevelopers = (from project in DbContext.Projects
-        //                           select project
-        //                  ).ToList();
-
-        //    ViewBag.AllProjects = currentProjects;
-
-        //    return View(ticketToEdit);
-        //}
     }
 }

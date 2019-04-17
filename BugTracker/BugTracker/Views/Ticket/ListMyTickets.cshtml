@@ -11,7 +11,7 @@
             <li class="breadcrumb-item">
                 <a href="#">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active">All Tickets</li>
+            <li class="breadcrumb-item active">My Tickets</li>
         </ol>
         <!-- DataTables Example -->
 
@@ -30,30 +30,35 @@
                             <th scope="col">Priority</th>
                             <th scope="col">Created By</th>
                             <th scope="col">Assigned To</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var ticket in Model)
                         {
-                            <tr>
-                                <th scope="row"></th>
-                                <td>@ticket.Title</td>
-                                <td>@ticket.Project.Name</td>
-                                <td>@ticket.DateCreated</td>
-                                <td>@ticket.DateUpdated</td>
-                                <td>@ticket.TicketType.Name</td>
-                                <td>@ticket.TicketStatus.Name</td>
-                                <td>@ticket.TicketPriority.Name</td>
-                                <td>@ticket.CreatedBy.UserName</td>
-                                @if (ticket.AssignedTo == null)
-                                {
-                                    <td>Not Assigned</td>
-                                }
-                                else
-                                {
-                                    <td>@ticket.AssignedTo.UserName</td>
-                                }
-                            </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>@ticket.Title</td>
+                            <td>@ticket.Project.Name</td>
+                            <td>@ticket.DateCreated</td>
+                            <td>@ticket.DateUpdated</td>
+                            <td>@ticket.TicketType.Name</td>
+                            <td>@ticket.TicketStatus.Name</td>
+                            <td>@ticket.TicketPriority.Name</td>
+                            <td>@ticket.CreatedBy.UserName</td>
+                            @if (ticket.AssignedTo == null)
+                            {
+                                <td>Not Assigned</td>
+                            }
+                            else
+                            {
+                                <td>@ticket.AssignedTo.UserName</td>
+                            }
+
+                            <td><a href="@Url.Action("EditMySubmitterTicket", "Ticket", new {id = ticket.Id})">Edit Ticket</a></td>
+                            <td><a href="@Url.Action("AddCommentSubmitter", "Ticket", new {id = ticket.Id})">Add Comment</a></td>
+                        </tr>
                         }
                     </tbody>
                 </table>
