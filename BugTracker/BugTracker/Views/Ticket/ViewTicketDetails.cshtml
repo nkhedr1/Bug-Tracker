@@ -1,0 +1,105 @@
+﻿@model Ticket
+@{
+    ViewBag.Title = "ViewTicketDetails";
+}
+
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Home")">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Ticket Details</li>
+        </ol>
+        <div class="card">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+                <div>
+                    <h5 class="card-title">Ticket Details</h5>
+                    <dl class="row">
+                        <dt class="col-sm-3">Title</dt>
+                        <dd class="col-sm-9">@Model.Title</dd>
+
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">
+                            @Model.Description
+                        </dd>
+
+                        <dt class="col-sm-3">Date Created</dt>
+                        <dd class="col-sm-9">@Model.DateCreated</dd>
+
+                        <dt class="col-sm-3 text-truncate">Date Updated</dt>
+                        <dd class="col-sm-9">@Model.DateUpdated</dd>
+
+                        <dt class="col-sm-3 text-truncate">Project</dt>
+                        <dd class="col-sm-9">@Model.Project.Name</dd>
+
+                        <dt class="col-sm-3 text-truncate">Ticket Priority</dt>
+                        <dd class="col-sm-9">@Model.TicketPriority.Name</dd>
+
+                        <dt class="col-sm-3 text-truncate">Ticket Status</dt>
+                        <dd class="col-sm-9">@Model.TicketStatus.Name</dd>
+
+                        <dt class="col-sm-3 text-truncate">Ticket Type</dt>
+                        <dd class="col-sm-9">@Model.TicketType.Name</dd>
+
+                        <dt class="col-sm-3 text-truncate">Created By</dt>
+                        <dd class="col-sm-9">@Model.CreatedBy.UserName</dd>
+
+
+                        @if (Model.AssignedTo == null)
+                        {
+                            <dt class="col-sm-3 text-truncate">Assigned To</dt>
+                            <dd class="col-sm-9">Not Assigned</dd>
+                        }
+                        else
+                        {
+                            <dt class="col-sm-3 text-truncate">Assigned To</dt>
+                            <dd class="col-sm-9">@Model.AssignedTo.UserName</dd>
+                        }
+
+                        <dt class="col-sm-3">Comments</dt>
+                        <dd class="col-sm-9">
+
+                            @foreach (var comment in Model.Comments)
+                            {
+                                <dl class="row">
+                                    <dt class="col-sm-3 text-truncate">Comment</dt>
+                                    <dd class="col-sm-9">@comment.TicketComment</dd>
+                                </dl>
+                                <dl class="row">
+                                    <dt class="col-sm-3 text-truncate">Created By</dt>
+                                    <dd class="col-sm-9">@comment.User.UserName</dd>
+                                </dl>
+                                <dl class="row">
+                                    <dt class="col-sm-3 text-truncate">Date Created</dt>
+                                    <dd class="col-sm-9">@comment.DateCreated</dd>
+                                </dl>
+                                <dl class="row">
+                                    <dt class="col-sm-3 text-truncate">Date Updated</dt>
+                                    <dd class="col-sm-9">@comment.DateUpdated</dd>
+                                </dl>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Attachments</dt>
+                        <dd class="col-sm-9">
+
+                            @foreach (var attatch in ViewBag.TicketAttachments)
+                            {
+                            <dl class="row">
+                                <dt class="col-sm-3 text-truncate">Attachment</dt>
+                                <dd class="col-sm-9"><a href="@attatch.FilePath">@attatch.FilePath</a></dd>                               
+                            </dl>
+                            }
+                        </dd>
+
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

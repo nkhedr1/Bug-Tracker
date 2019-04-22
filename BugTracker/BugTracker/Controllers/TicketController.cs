@@ -4,6 +4,7 @@ using BugTracker.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -52,7 +53,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
             var ticketTypeId = formData["TicketType"];
             var ticketPriorityId = formData["TicketPriority"];
-
+     
             var projectToAddTicketTo = DbContext.Projects.FirstOrDefault(
                project => project.Id == id);
 
@@ -75,6 +76,8 @@ namespace BugTracker.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+       
 
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult ListAllTickets()
@@ -477,6 +480,147 @@ namespace BugTracker.Controllers
             DbContext.SaveChanges();
 
             return RedirectToAction(nameof(TicketController.ListMyTickets));
+        }
+
+        // method to create attatchment folder and the path for it
+        private string UploadFile(HttpPostedFileBase file)
+        {
+            if (file != null)
+            {
+                var uploadFolder = "~/Upload/";
+                var mappedFolder = Server.MapPath(uploadFolder);
+
+                if (!Directory.Exists(mappedFolder))
+                {
+                    Directory.CreateDirectory(mappedFolder);
+                }
+
+                file.SaveAs(mappedFolder + file.FileName);
+
+                return uploadFolder + file.FileName;
+            }
+
+            return null;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, Project Manager")]
+        public ActionResult AddAttatchmentAdminProjectManager()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, Project Manager")]
+        public ActionResult AddAttatchmentAdminProjectManager(TicketAttachment attachData, HttpPostedFileBase UploadedFile, int id)
+        {
+            var ticketToEdit = DbContext.Tickets.FirstOrDefault(
+                ticket => ticket.Id == id);
+
+            var userId = User.Identity.GetUserId();
+
+            var attachment = new TicketAttachment();
+
+            if (UploadedFile != null && UploadedFile.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(UploadedFile.FileName);
+                attachment.FilePath = UploadFile(UploadedFile);
+                attachment.AttachmentDiscription = attachData.AttachmentDiscription;
+                attachment.UserId = userId;
+                attachment.DateCreated = DateTime.Today;
+                attachment.TicketId = id;
+            }
+
+            ticketToEdit.TicketAttachments.Add(attachment);
+
+            DbContext.SaveChanges();
+            return RedirectToAction(nameof(TicketController.ListAllTickets));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Developer")]
+        public ActionResult AddAttatchmentDeveloper()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Developer")]
+        public ActionResult AddAttatchmentDeveloper(TicketAttachment attachData, HttpPostedFileBase UploadedFile, int id)
+        {
+            var ticketToEdit = DbContext.Tickets.FirstOrDefault(
+                ticket => ticket.Id == id);
+
+            var userId = User.Identity.GetUserId();
+
+            var attachment = new TicketAttachment();
+
+            if (UploadedFile != null && UploadedFile.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(UploadedFile.FileName);
+                attachment.FilePath = UploadFile(UploadedFile);
+                attachment.AttachmentDiscription = attachData.AttachmentDiscription;
+                attachment.UserId = userId;
+                attachment.DateCreated = DateTime.Today;
+                attachment.TicketId = id;
+            }
+
+            ticketToEdit.TicketAttachments.Add(attachment);
+
+            DbContext.SaveChanges();
+            return RedirectToAction(nameof(TicketController.ListDeveloperTickets));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Submitter")]
+        public ActionResult AddAttatchmentSubmitter()
+        {
+          
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Submitter")]
+        public ActionResult AddAttatchmentSubmitter(TicketAttachment attachData, HttpPostedFileBase UploadedFile, int id)
+        {
+            var ticketToEdit = DbContext.Tickets.FirstOrDefault(
+                 ticket => ticket.Id == id);
+
+            var userId = User.Identity.GetUserId();
+
+            var attachment = new TicketAttachment();
+
+            if (UploadedFile != null && UploadedFile.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(UploadedFile.FileName);
+                attachment.FilePath = UploadFile(UploadedFile);
+                attachment.AttachmentDiscription = attachData.AttachmentDiscription;
+                attachment.UserId = userId;
+                attachment.DateCreated = DateTime.Today;
+                attachment.TicketId = id;
+            }
+
+            ticketToEdit.TicketAttachments.Add(attachment);
+
+            DbContext.SaveChanges();
+            return RedirectToAction(nameof(TicketController.ListMyTickets));
+        }
+
+        [Authorize]
+        public ActionResult ViewTicketDetails(int id)
+        {
+            var ticketToView = DbContext.Tickets.FirstOrDefault(
+                project => project.Id == id);
+
+
+            var ticketAttachments = (from attatch in DbContext.TicketAttachments
+                                     where attatch.TicketId == id
+                                     select attatch
+                           ).ToList();
+
+            ViewBag.TicketAttachments = ticketAttachments;
+
+            return View(ticketToView);
         }
     }
 }

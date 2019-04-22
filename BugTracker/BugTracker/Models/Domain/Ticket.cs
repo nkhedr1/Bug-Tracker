@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -28,10 +29,12 @@ namespace BugTracker.Models.Domain
         public string AssignedToId { get; set; }
 
         public virtual List<Comment> Comments { get; set; }
+        public virtual List<TicketAttachment> TicketAttachments { get; set; }
 
         public Ticket()
         {
             Comments = new List<Comment>();
+            TicketAttachments = new List<TicketAttachment>();
 
         }
     }
