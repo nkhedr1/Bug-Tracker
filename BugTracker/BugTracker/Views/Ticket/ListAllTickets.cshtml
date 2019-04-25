@@ -32,6 +32,7 @@
                             <th scope="col"></th>
                             <th scope="col"></th>
                             <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,8 +56,10 @@
                                 <td>@ticket.AssignedTo.UserName</td>
                             }
                             <td><a href="@Url.Action("EditTicket", "Ticket", new {id = ticket.Id})">Edit</a></td>
-                            <td><a href="@Url.Action("AddCommentAdminsProjectManagers", "Ticket", new {id = ticket.Id})">Comment</a></td>
-                            <td><a href="@Url.Action("AddAttatchmentAdminProjectManager", "Ticket", new {id = ticket.Id})">Attachment</a></td>
+                            <td><a href="@Url.Action("AddCommentAdminsProjectManagers", "Ticket", new {id = ticket.Id})">Add Comment</a></td>
+                            <td><a href="@Url.Action("ListAllCommentsForTicketAdminProjectManager", "Comment", new {id = ticket.Id})">All Comments</a></td>
+                            <td><a href="@Url.Action("AddAttatchmentAdminProjectManager", "Ticket", new {id = ticket.Id})">Add Attachment</a></td>
+                            <td><a href="@Url.Action("ListAllAttachmentsForTicketAdminProjectManager", "Attachment", new {id = ticket.Id})">All Attachments</a></td>
                             <td><a href="@Url.Action("ViewTicketDetails", "Ticket", new {id = ticket.Id})">Details</a></td>
                         </tr>
                         }

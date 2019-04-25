@@ -4,6 +4,7 @@ using BugTracker.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -14,6 +15,7 @@ namespace BugTracker.Controllers
     public class TicketController : Controller
     {
         private ApplicationDbContext DbContext;
+
 
         public TicketController()
         {
@@ -53,7 +55,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
             var ticketTypeId = formData["TicketType"];
             var ticketPriorityId = formData["TicketPriority"];
-     
+
             var projectToAddTicketTo = DbContext.Projects.FirstOrDefault(
                project => project.Id == id);
 
@@ -77,7 +79,7 @@ namespace BugTracker.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-       
+
 
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult ListAllTickets()
@@ -207,12 +209,20 @@ namespace BugTracker.Controllers
         public ActionResult EditTicket(ViewAllTicketsViewModel ticketData, FormCollection formData)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == ticketData.Id);
+                ticket => ticket.Id == ticketData.Id);
+
+            var userId = User.Identity.GetUserId();
+
+            var currentUserName =
+                           (from p in DbContext.Users
+                            where p.Id == userId
+                            select p.UserName).FirstOrDefault();
 
             var ticketTypeId = formData["TicketType"];
             var ticketPriorityId = formData["TicketPriority"];
             var ticketStatusId = formData["TicketStatus"];
             var ticketProjectId = formData["Projects"];
+
             var developerId = formData["AssignDeveloper"];
 
             ticketToEdit.DateUpdated = DateTime.Today;
@@ -231,9 +241,225 @@ namespace BugTracker.Controllers
                 ticketToEdit.AssignedToId = developerId;
             }
 
+            // Tracking the History of changes in a ticket
+
+            var modifiedEntities = DbContext.ChangeTracker.Entries()
+                .Where(p => p.State == EntityState.Modified).ToList();
+
+            var dateChanged = DateTime.UtcNow;
+
+            foreach (var change in modifiedEntities)
+            {
+
+                foreach (var prop in change.OriginalValues.PropertyNames)
+                {
+                    // Checking to see if the property is not AssignedTo as there is a string in my select option for the assigned users that sets the user to "Not Assigned" incase the ticket is un assigned
+                    if (prop != "AssignedToId")
+                    {
+                        var originalValue = change.OriginalValues[prop].ToString();
+                        var currentValue = change.CurrentValues[prop].ToString();
+
+                        if (originalValue != currentValue)
+                        {
+                            if (prop == "ProjectId")
+                            {
+                                var originalValueInt = Int32.Parse(originalValue);
+                                var currentValueInt = Int32.Parse(currentValue);
+                                var oldValueQuery =
+                                    (from p in DbContext.Projects
+                                     where p.Id == originalValueInt
+                                     select p.Name).FirstOrDefault();
+
+                                var currentValueQuery =
+                                 (from p in DbContext.Projects
+                                  where p.Id == currentValueInt
+                                  select p.Name).FirstOrDefault();
+
+                                TicketHistory log = new TicketHistory()
+                                {
+                                    Property = "Project",
+                                    OldValue = oldValueQuery,
+                                    NewValue = currentValueQuery,
+                                    DateChanged = dateChanged,
+                                    UserId = userId,
+                                    ChangedBy = currentUserName
+                                };
+
+                                ticketToEdit.TicketHistories.Add(log);
+                            }
+                            else if (prop == "TicketPriorityId")
+                            {
+                                var originalValueInt = Int32.Parse(originalValue);
+                                var currentValueInt = Int32.Parse(currentValue);
+                                var oldValueQuery =
+                                    (from p in DbContext.TicketPriorities
+                                     where p.Id == originalValueInt
+                                     select p.Name).FirstOrDefault();
+
+                                var currentValueQuery =
+                                 (from p in DbContext.TicketPriorities
+                                  where p.Id == currentValueInt
+                                  select p.Name).FirstOrDefault();
+
+                                TicketHistory log = new TicketHistory()
+                                {
+                                    Property = "Priority",
+                                    OldValue = oldValueQuery,
+                                    NewValue = currentValueQuery,
+                                    DateChanged = dateChanged,
+                                    UserId = userId,
+                                    ChangedBy = currentUserName
+                                };
+
+                                ticketToEdit.TicketHistories.Add(log);
+                            }
+
+                            else if (prop == "TicketStatusId")
+                            {
+                                var originalValueInt = Int32.Parse(originalValue);
+                                var currentValueInt = Int32.Parse(currentValue);
+                                var oldValueQuery =
+                                    (from p in DbContext.TicketStatuses
+                                     where p.Id == originalValueInt
+                                     select p.Name).FirstOrDefault();
+
+                                var currentValueQuery =
+                                 (from p in DbContext.TicketStatuses
+                                  where p.Id == currentValueInt
+                                  select p.Name).FirstOrDefault();
+
+                                TicketHistory log = new TicketHistory()
+                                {
+                                    Property = "Ticket Status",
+                                    OldValue = oldValueQuery,
+                                    NewValue = currentValueQuery,
+                                    DateChanged = dateChanged,
+                                    UserId = userId,
+                                    ChangedBy = currentUserName
+                                };
+
+                                ticketToEdit.TicketHistories.Add(log);
+                            }
+
+                            else if (prop == "TicketTypeId")
+                            {
+                                var originalValueInt = Int32.Parse(originalValue);
+                                var currentValueInt = Int32.Parse(currentValue);
+                                var oldValueQuery =
+                                    (from p in DbContext.TicketTypes
+                                     where p.Id == originalValueInt
+                                     select p.Name).FirstOrDefault();
+
+                                var currentValueQuery =
+                                 (from p in DbContext.TicketTypes
+                                  where p.Id == currentValueInt
+                                  select p.Name).FirstOrDefault();
+
+                                TicketHistory log = new TicketHistory()
+                                {
+                                    Property = "Ticket Type",
+                                    OldValue = oldValueQuery,
+                                    NewValue = currentValueQuery,
+                                    DateChanged = dateChanged,
+                                    UserId = userId,
+                                    ChangedBy = currentUserName
+                                };
+
+                                ticketToEdit.TicketHistories.Add(log);
+                            }
+
+                            else if (prop == "TicketTypeId")
+                            {
+                                var originalValueInt = Int32.Parse(originalValue);
+                                var currentValueInt = Int32.Parse(currentValue);
+                                var oldValueQuery =
+                                    (from p in DbContext.TicketTypes
+                                     where p.Id == originalValueInt
+                                     select p.Name).FirstOrDefault();
+
+                                var currentValueQuery =
+                                 (from p in DbContext.TicketTypes
+                                  where p.Id == currentValueInt
+                                  select p.Name).FirstOrDefault();
+
+                                TicketHistory log = new TicketHistory()
+                                {
+                                    Property = "Ticket Type",
+                                    OldValue = oldValueQuery,
+                                    NewValue = currentValueQuery,
+                                    DateChanged = dateChanged,
+                                    UserId = userId,
+                                    ChangedBy = currentUserName
+                                };
+
+                                ticketToEdit.TicketHistories.Add(log);
+                            }
+
+                            else
+                            {
+                                TicketHistory log = new TicketHistory()
+                                {
+                                    Property = prop,
+                                    OldValue = originalValue,
+                                    NewValue = currentValue,
+                                    DateChanged = dateChanged,
+                                    UserId = userId
+                                };
+
+                                ticketToEdit.TicketHistories.Add(log);
+                            }
+                        }
+                    }
+
+                    else if (prop == "AssignedToId" && change.OriginalValues[prop] != null)
+                    {
+                        var originalValue = change.OriginalValues[prop].ToString();
+                        var currentValue = "";
+                        var currentValueQuery = "";
+                        var oldValueQuery =
+                            (from p in DbContext.Users
+                             where p.Id == originalValue
+                             select p.UserName).FirstOrDefault();
+
+                        if (currentValue.GetType() != typeof(string))
+                        {
+                            currentValueQuery =
+                               (from p in DbContext.Users
+                                where p.Id == currentValue.ToString()
+                                select p.UserName).FirstOrDefault();
+                        }
+                        else if (currentValue.GetType() == typeof(string))
+                        {
+                            {
+                                currentValueQuery =
+                                   (from p in DbContext.Users
+                                    where p.Id == currentValue
+                                    select p.UserName).FirstOrDefault();
+                            }
+                        }
+
+
+                        TicketHistory log = new TicketHistory()
+
+                        {
+                            Property = "Assigned To",
+                            OldValue = oldValueQuery,
+                            NewValue = currentValueQuery,
+                            DateChanged = dateChanged,
+                            UserId = userId,
+                            ChangedBy = currentUserName
+                        };
+
+                        ticketToEdit.TicketHistories.Add(log);
+                    }
+
+                }
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListAllTickets));
         }
+
 
         [Authorize(Roles = "Developer")]
         public ActionResult ListDeveloperTickets()
@@ -329,7 +555,160 @@ namespace BugTracker.Controllers
             ticketToEdit.ProjectId = Int32.Parse(ticketProjectId);
             ticketToEdit.TicketPriorityId = Int32.Parse(ticketPriorityId);
             ticketToEdit.TicketTypeId = Int32.Parse(ticketTypeId);
- 
+
+
+
+            // Tracking the History of changes in a ticket
+
+            var userId = User.Identity.GetUserId();
+
+            var currentUserName =
+                           (from p in DbContext.Users
+                            where p.Id == userId
+                            select p.UserName).FirstOrDefault();
+
+            var modifiedEntities = DbContext.ChangeTracker.Entries()
+                .Where(p => p.State == EntityState.Modified).ToList();
+
+            var dateChanged = DateTime.UtcNow;
+
+            foreach (var change in modifiedEntities)
+            {
+
+                foreach (var prop in change.OriginalValues.PropertyNames)
+                {
+
+                    var originalValue = change.OriginalValues[prop].ToString();
+                    var currentValue = change.CurrentValues[prop].ToString();
+
+                    if (originalValue != currentValue)
+                    {
+                        if (prop == "ProjectId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.Projects
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.Projects
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Project",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+                        else if (prop == "TicketPriorityId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.TicketPriorities
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.TicketPriorities
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Priority",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+
+
+                        else if (prop == "TicketTypeId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.TicketTypes
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.TicketTypes
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Ticket Type",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+
+                        else if (prop == "TicketTypeId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.TicketTypes
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.TicketTypes
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Ticket Type",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+
+                        else
+                        {
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = prop,
+                                OldValue = originalValue,
+                                NewValue = currentValue,
+                                DateChanged = dateChanged,
+                                UserId = userId
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+                    }
+
+                }
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListDeveloperTickets));
         }
@@ -391,6 +770,156 @@ namespace BugTracker.Controllers
             ticketToEdit.TicketPriorityId = Int32.Parse(ticketPriorityId);
             ticketToEdit.TicketTypeId = Int32.Parse(ticketTypeId);
 
+            // Tracking the History of changes in a ticket
+
+            var userId = User.Identity.GetUserId();
+
+            var currentUserName =
+                           (from p in DbContext.Users
+                            where p.Id == userId
+                            select p.UserName).FirstOrDefault();
+
+            var modifiedEntities = DbContext.ChangeTracker.Entries()
+                .Where(p => p.State == EntityState.Modified).ToList();
+
+            var dateChanged = DateTime.UtcNow;
+
+            foreach (var change in modifiedEntities)
+            {
+
+                foreach (var prop in change.OriginalValues.PropertyNames)
+                {
+
+                    var originalValue = change.OriginalValues[prop].ToString();
+                    var currentValue = change.CurrentValues[prop].ToString();
+
+                    if (originalValue != currentValue)
+                    {
+                        if (prop == "ProjectId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.Projects
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.Projects
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Project",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+                        else if (prop == "TicketPriorityId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.TicketPriorities
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.TicketPriorities
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Priority",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+
+
+                        else if (prop == "TicketTypeId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.TicketTypes
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.TicketTypes
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Ticket Type",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+
+                        else if (prop == "TicketTypeId")
+                        {
+                            var originalValueInt = Int32.Parse(originalValue);
+                            var currentValueInt = Int32.Parse(currentValue);
+                            var oldValueQuery =
+                                (from p in DbContext.TicketTypes
+                                 where p.Id == originalValueInt
+                                 select p.Name).FirstOrDefault();
+
+                            var currentValueQuery =
+                             (from p in DbContext.TicketTypes
+                              where p.Id == currentValueInt
+                              select p.Name).FirstOrDefault();
+
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = "Ticket Type",
+                                OldValue = oldValueQuery,
+                                NewValue = currentValueQuery,
+                                DateChanged = dateChanged,
+                                UserId = userId,
+                                ChangedBy = currentUserName
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+
+                        else
+                        {
+                            TicketHistory log = new TicketHistory()
+                            {
+                                Property = prop,
+                                OldValue = originalValue,
+                                NewValue = currentValue,
+                                DateChanged = dateChanged,
+                                UserId = userId
+                            };
+
+                            ticketToEdit.TicketHistories.Add(log);
+                        }
+                    }
+                }
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListMyTickets));
         }
@@ -399,7 +928,7 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult AddCommentAdminsProjectManagers()
         {
-       
+
             return View();
         }
 
@@ -427,7 +956,7 @@ namespace BugTracker.Controllers
         [HttpGet]
         [Authorize(Roles = "Developer")]
         public ActionResult AddCommentDeveloper()
-        {        
+        {
             return View();
         }
 
@@ -487,7 +1016,7 @@ namespace BugTracker.Controllers
         {
             if (file != null)
             {
-                var uploadFolder = "~/Upload/";
+                var uploadFolder = "/Upload/";
                 var mappedFolder = Server.MapPath(uploadFolder);
 
                 if (!Directory.Exists(mappedFolder))
@@ -575,7 +1104,7 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Submitter")]
         public ActionResult AddAttatchmentSubmitter()
         {
-          
+
             return View();
         }
 
@@ -620,7 +1149,15 @@ namespace BugTracker.Controllers
 
             ViewBag.TicketAttachments = ticketAttachments;
 
+            var ticketHistory = (from history in DbContext.TicketHistories
+                                 where history.TicketId == id
+                                 select history
+                          ).ToList();
+
+            ViewBag.TicketHistories = ticketHistory;
+
             return View(ticketToView);
         }
+
     }
 }

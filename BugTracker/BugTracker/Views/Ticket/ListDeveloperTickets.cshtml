@@ -32,6 +32,9 @@
                             <th scope="col"></th>
                             <th scope="col"></th>
                             <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,8 +58,10 @@
                                 <td>@ticket.AssignedTo.UserName</td>
                             }
                             <td><a href="@Url.Action("EditDeveloperTicket", "Ticket", new {id = ticket.Id})">Edit</a></td>
-                            <td><a href="@Url.Action("AddCommentDeveloper", "Ticket", new {id = ticket.Id})">Comment</a></td>
-                            <td><a href="@Url.Action("AddAttatchmentDeveloper", "Ticket", new {id = ticket.Id})">Attachment</a></td>
+                            <td><a href="@Url.Action("AddCommentDeveloper", "Ticket", new {id = ticket.Id})">Add Comment</a></td>
+                            <td><a href="@Url.Action("ListAllCommentsForTicketDeveloperSubmitter", "Comment", new {id = ticket.Id})">My Comments</a></td>
+                            <td><a href="@Url.Action("AddAttatchmentDeveloper", "Ticket", new {id = ticket.Id})">Add Attachment</a></td>
+                            <td><a href="@Url.Action("ListAllAttachmentsForDeveloperSubmitter", "Attachment", new {id = ticket.Id})">All Attachments</a></td>
                             <td><a href="@Url.Action("ViewTicketDetails", "Ticket", new {id = ticket.Id})">Details</a></td>
                         </tr>
                         }
@@ -80,6 +85,9 @@
                             <th scope="col">Priority</th>
                             <th scope="col">Created By</th>
                             <th scope="col">Assigned To</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -106,6 +114,8 @@
 
                             <td><a href="@Url.Action("EditDeveloperTicket", "Ticket", new {id = ticket.Id})">Edit</a></td>
                             <td><a href="@Url.Action("ViewTicketDetails", "Ticket", new {id = ticket.Id})">Details</a></td>
+                            <td><a href="@Url.Action("ListAllCommentsForTicketDeveloperSubmitter", "Comment", new {id = ticket.Id})">My Comments</a></td>
+                            <td><a href="@Url.Action("ListAllAttachmentsForDeveloperSubmitter", "Attachment", new {id = ticket.Id})">All Attachments</a></td>
                         </tr>
                         }
                     </tbody>

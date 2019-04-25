@@ -89,10 +89,36 @@
 
                             @foreach (var attatch in ViewBag.TicketAttachments)
                             {
-                            <dl class="row">
-                                <dt class="col-sm-3 text-truncate">Attachment</dt>
-                                <dd class="col-sm-9"><a href="@attatch.FilePath">@attatch.FilePath</a></dd>                               
-                            </dl>
+                                <dl class="row">
+                                    <dt class="col-sm-3 text-truncate">Attachment</dt>
+                                    <dd class="col-sm-9"><a href="@attatch.FilePath">@attatch.FilePath</a></dd>
+                                </dl>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">History</dt>
+                        <dd class="col-sm-9">
+
+                            @foreach (var history in ViewBag.TicketHistories)
+                            {
+                                <dl class="row">
+                                    <dd class="col-sm-9">
+                                        User @history.ChangedBy changed @history.Property from
+                                        @if (history.Property == "Assigned To" && history.OldValue == null)
+                                        {
+                                            <p>Not Assigned to  @history.NewValue on @history.DateChanged</p>
+                                        }
+
+                                        else if (history.Property == "Assigned To" && history.NewValue == null)
+                                        {
+                                            <p>@history.OldValue to Not Assigned on @history.DateChanged</p>
+                                        }
+                                        else
+                                        {
+                                            <p>@history.OldValue to @history.NewValue on @history.DateChanged</p>
+                                        }
+                                    </dd>
+                                </dl>
                             }
                         </dd>
 

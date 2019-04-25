@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BugTracker.Models.Domain;
@@ -16,6 +18,7 @@ namespace BugTracker.Models
         public string FirstName { get; set; }
         public virtual List<Comment> Comments { get; set; }
         public virtual List<TicketAttachment> TicketAttachments { get; set; }
+        public virtual List<TicketHistory> TicketHistories { get; set; }
 
         [InverseProperty(nameof(Ticket.CreatedBy))]
         public virtual List<Ticket> CreatedTickets { get; set; }
@@ -30,6 +33,7 @@ namespace BugTracker.Models
             AssignedTickets = new List<Ticket>();
             Comments = new List<Comment>();
             TicketAttachments = new List<TicketAttachment>();
+            TicketHistories = new List<TicketHistory>();
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -55,6 +59,8 @@ namespace BugTracker.Models
         public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
+        public DbSet<TicketHistory> TicketHistories { get; set; }
+
 
         public static ApplicationDbContext Create()
         {
