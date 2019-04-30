@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 
@@ -254,7 +256,7 @@ namespace BugTracker.Controllers
                 foreach (var prop in change.OriginalValues.PropertyNames)
                 {
                     // Checking to see if the property is not AssignedTo as there is a string in my select option for the assigned users that sets the user to "Not Assigned" incase the ticket is un assigned
-                    if (prop != "AssignedToId")
+                    if (prop != "AssignedToId" && prop != "DateUpdated")
                     {
                         var originalValue = change.OriginalValues[prop].ToString();
                         var currentValue = change.CurrentValues[prop].ToString();
@@ -451,8 +453,54 @@ namespace BugTracker.Controllers
                         };
 
                         ticketToEdit.TicketHistories.Add(log);
+
+
+                        // quering for the assigned to user email to send notification of assigning a ticket
+                        var originalAssignedToEmail =
+                                (from p in DbContext.Users
+                                 where p.Id == originalValue
+                                 select p.Email).FirstOrDefault();
+
+                        if (change.CurrentValues[prop] != null)
+                        {
+                            var currentAssignedToId = change.CurrentValues[prop].ToString();
+
+                            var currentAssignedToEmail =
+                            (from p in DbContext.Users
+                             where p.Id == currentAssignedToId
+                             select p.Email).FirstOrDefault();
+
+                            if (originalAssignedToEmail != currentAssignedToEmail)
+
+                                SendEmailNotification(currentAssignedToEmail, "Ticket Assigned", "You have been assigned a new ticket");
+                        }
+
                     }
 
+                }
+
+
+            }
+
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (modifiedEntities.Any() && ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                if (modifiedEntities.Any())
+                {
+                    SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
                 }
             }
 
@@ -709,6 +757,28 @@ namespace BugTracker.Controllers
                 }
             }
 
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (modifiedEntities.Any() && ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                if (modifiedEntities.Any())
+                {
+                    SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+                }
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListDeveloperTickets));
         }
@@ -920,6 +990,28 @@ namespace BugTracker.Controllers
                 }
             }
 
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (modifiedEntities.Any() && ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                if (modifiedEntities.Any())
+                {
+                    SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+                }
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListMyTickets));
         }
@@ -949,6 +1041,26 @@ namespace BugTracker.Controllers
             comment.UserId = userId;
 
             ticketToEdit.Comments.Add(comment);
+
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                    SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListAllTickets));
         }
@@ -977,6 +1089,25 @@ namespace BugTracker.Controllers
             comment.UserId = userId;
 
             ticketToEdit.Comments.Add(comment);
+
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+            }
             DbContext.SaveChanges();
 
             return RedirectToAction(nameof(TicketController.ListDeveloperTickets));
@@ -1006,6 +1137,26 @@ namespace BugTracker.Controllers
             comment.UserId = userId;
 
             ticketToEdit.Comments.Add(comment);
+
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+            }
+
             DbContext.SaveChanges();
 
             return RedirectToAction(nameof(TicketController.ListMyTickets));
@@ -1062,6 +1213,25 @@ namespace BugTracker.Controllers
 
             ticketToEdit.TicketAttachments.Add(attachment);
 
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListAllTickets));
         }
@@ -1095,6 +1265,25 @@ namespace BugTracker.Controllers
             }
 
             ticketToEdit.TicketAttachments.Add(attachment);
+
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+            }
 
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListDeveloperTickets));
@@ -1131,11 +1320,31 @@ namespace BugTracker.Controllers
 
             ticketToEdit.TicketAttachments.Add(attachment);
 
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
+            // Sending mail notification to Admins and Project Managers who are opted in receiving notifications for for any change in the ticket
+
+            foreach (var user in ticketToEdit.EmailNotifications)
+            {
+                SendEmailNotification(user.Email, "Ticket Modified", "This ticket has been modified");
+            }
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.ListMyTickets));
         }
 
         [Authorize]
+        [HttpGet]
         public ActionResult ViewTicketDetails(int id)
         {
             var ticketToView = DbContext.Tickets.FirstOrDefault(
@@ -1157,6 +1366,75 @@ namespace BugTracker.Controllers
             ViewBag.TicketHistories = ticketHistory;
 
             return View(ticketToView);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult ViewTicketDetails(int id, FormCollection formData)
+        {
+            var ticketToView = DbContext.Tickets.FirstOrDefault(
+               project => project.Id == id);
+
+            var userId = User.Identity.GetUserId();
+
+            var currentUser = DbContext.Users.FirstOrDefault(
+               user => user.Id == userId);
+
+            var emailOptIn = formData["emailNotification"];
+
+            //Checking if user is admin or project manager and adds or removes them from a list of opted in users for the email notification service for the ticket
+            if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                    {
+                        if (emailOptIn != null)
+                        {
+                            if (!ticketToView.EmailNotifications.Contains(currentUser))
+                            {
+                                ticketToView.EmailNotifications.Add(currentUser);
+                            }
+                        }
+                        else
+                        {
+                            if (ticketToView.EmailNotifications.Contains(currentUser))
+                            {
+                                ticketToView.EmailNotifications.Remove(currentUser);
+                            }
+                        }
+                    }
+
+            DbContext.SaveChanges();
+            return RedirectToAction(nameof(TicketController.ListAllTickets));
+        }
+
+        //method to send email notification
+        protected void SendEmailNotification(string email, string subject, string body)
+        {
+
+            MailAddress from = new MailAddress("nour@gmail.com");
+            MailAddress to = new MailAddress(email);
+            MailMessage message = new MailMessage(from, to);
+
+            message.Subject = subject;
+            message.Body = body;
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            message.IsBodyHtml = true;
+
+            SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
+            client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("e4ffc6c1f9b78a", "0e3ad862fa6817");
+
+            try
+            {
+                client.Send(message);
+            }
+            catch
+            {
+                //error message?
+            }
+            finally
+            {
+
+            }
         }
 
     }

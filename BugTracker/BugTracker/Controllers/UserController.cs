@@ -5,6 +5,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using static BugTracker.Models.ViewModels.ManageRoleViewModel;
@@ -122,7 +124,7 @@ namespace BugTracker.Controllers
             var userDetailsViewPage = new UserSettingsViewModel();
             userDetailsViewPage.Email = loggedInUser.Email;
             userDetailsViewPage.FirstName = loggedInUser.FirstName;
-            userDetailsViewPage.Id = loggedInUser.Id;
+            userDetailsViewPage.Id = loggedInUser.Id;           
 
             return View(userDetailsViewPage);
         }
@@ -153,7 +155,7 @@ namespace BugTracker.Controllers
 
             DbContext.SaveChanges();
             return View();
-        }
+        }    
 
     }
 }

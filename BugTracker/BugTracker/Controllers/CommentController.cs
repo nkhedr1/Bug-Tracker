@@ -4,6 +4,8 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Net;
+using System.Net.Mail;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -53,6 +55,21 @@ namespace BugTracker.Controllers
 
             commentToEdit.TicketComment = commentData.TicketComment;
             commentToEdit.DateUpdated = DateTime.Today;
+
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketToEdit = DbContext.Tickets.FirstOrDefault(
+                ticket => ticket.Id == commentData.TicketId);
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
 
             DbContext.SaveChanges();
 
@@ -108,6 +125,21 @@ namespace BugTracker.Controllers
             commentToEdit.TicketComment = commentData.TicketComment;
             commentToEdit.DateUpdated = DateTime.Today;
 
+            // Sending mail notification to developer for any change in the ticket
+
+            var ticketToEdit = DbContext.Tickets.FirstOrDefault(
+                ticket => ticket.Id == commentData.TicketId);
+
+            var ticketAssignedUserEmail =
+                           (from p in DbContext.Users
+                            where p.Id == ticketToEdit.AssignedToId
+                            select p.Email).FirstOrDefault();
+
+            if (ticketAssignedUserEmail != null)
+            {
+                SendEmailNotification(ticketAssignedUserEmail, "Ticket Modified", "The ticket you are assigned to has been modified");
+            }
+
             DbContext.SaveChanges();
 
             return RedirectToAction("ListAllCommentsForTicketDeveloperSubmitter", new { id = commentData.TicketId });
@@ -126,6 +158,38 @@ namespace BugTracker.Controllers
             DbContext.SaveChanges();
 
             return RedirectToAction("ListAllCommentsForTicketDeveloperSubmitter", new { id = commentData.TicketId });
+        }
+
+        //method to send email notification
+        protected void SendEmailNotification(string email, string subject, string body)
+        {
+
+            MailAddress from = new MailAddress("nour@gmail.com");
+            MailAddress to = new MailAddress(email);
+            MailMessage message = new MailMessage(from, to);
+
+            message.Subject = subject;
+            message.Body = body;
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            message.IsBodyHtml = true;
+
+            SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
+            client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("e4ffc6c1f9b78a", "0e3ad862fa6817");
+
+            try
+            {
+                client.Send(message);
+            }
+            catch
+            {
+                //error message?
+            }
+            finally
+            {
+
+            }
         }
     }
 }
