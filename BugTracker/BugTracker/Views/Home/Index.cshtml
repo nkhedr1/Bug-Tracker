@@ -10,7 +10,118 @@
                         <span>Dashboard</span>
                     </li>
                 </ol>
-            </div> 
-                         
+                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                {
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-primary o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-comments"></i>
+                                    </div>
+                                    <div class="mr-5">Current Projects: @ViewBag.AllProjects</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-warning o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-list"></i>
+                                    </div>
+                                    <div class="mr-5">Current Open Tickets: @ViewBag.AllOpenTickets</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-success o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-list"></i>
+                                    </div>
+                                    <div class="mr-5">Current Resolved Tickets: @ViewBag.AllResolvedTickets</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-danger o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-list"></i>
+                                    </div>
+                                    <div class="mr-5">Current Rejected Tickets: @ViewBag.AllRejectedTickets</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (User.IsInRole("Developer"))
+                {
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-primary o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-comments"></i>
+                                    </div>
+                                    <div class="mr-5">My Assigned Projects: @ViewBag.CurrentDeveloperAssignedProjects</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-success o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-comments"></i>
+                                    </div>
+                                    <div class="mr-5">My Assigned Tickets: @ViewBag.CurrentDeveloperAssignedTickets</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (User.IsInRole("Submitter"))
+                {
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-primary o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-comments"></i>
+                                    </div>
+                                    <div class="mr-5">My Assigned Projects: @ViewBag.CurrentSubmitterAssignedProjects</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-6 mb-3">
+                            <div class="card text-white bg-success o-hidden h-100">
+                                <div class="card-body">
+                                    <div class="card-body-icon">
+                                        <i class="fas fa-fw fa-comments"></i>
+                                    </div>
+                                    <div class="mr-5">My Created Tickets: @ViewBag.CurrentSubmitterCreatedTickets</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
             </div>
   
