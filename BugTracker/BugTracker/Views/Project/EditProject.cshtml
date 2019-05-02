@@ -25,6 +25,25 @@
                                 @Html.TextBoxFor(project => project.Name, new { @class = "form-control" })
                             </div>
                         </div>
+                        @if (Model.Archived)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="Archived" name="archiveProject" checked>
+                                <label class="form-check-label" for="defaultCheck1">
+                                    Archive Project
+                                </label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="Archived" name="archiveProject">
+                                <label class="form-check-label" for="defaultCheck1">
+                                    Archive Project
+                                </label>
+                            </div>
+                        }
+                        
                         <button type="submit" class="btn btn-primary mb-2" value="Save">Submit</button>
                     </form>
                 </div>

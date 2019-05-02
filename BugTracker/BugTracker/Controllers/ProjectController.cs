@@ -36,6 +36,7 @@ namespace BugTracker.Controllers
             currentProject.Name = projectData.Name;
             currentProject.Id = projectData.Id;
             currentProject.DateCreated = DateTime.Today;
+            currentProject.Archived = projectData.Archived;
             DbContext.Projects.Add(currentProject);
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProjectController.ListAllProjects));
@@ -54,18 +55,29 @@ namespace BugTracker.Controllers
             projectModel.Name = projectToEdit.Name;
             projectModel.DateCreated = projectToEdit.DateCreated;
             projectModel.DateUpdated = projectToEdit.DateUpdated;
+            projectModel.Archived = projectToEdit.Archived;
             return View(projectModel);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, Project Manager")]
-        public ActionResult EditProject(CreateProjectViewModel projectData)
+        public ActionResult EditProject(CreateProjectViewModel projectData, FormCollection formData)
         {
             var projectToEdit = DbContext.Projects.FirstOrDefault(
                 project => project.Id == projectData.Id);
+            var projectArchived = formData["archiveProject"];
 
+            if (projectArchived != null)
+            {
+                projectToEdit.Archived = true;
+            }
+            else
+            {
+                projectToEdit.Archived = false;
+            }
             projectToEdit.Name = projectData.Name;
             projectToEdit.DateUpdated = DateTime.Today;
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProjectController.ListAllProjects));
         }
@@ -76,15 +88,17 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
             List<CreateProjectViewModel> allProjects;
 
-            allProjects = DbContext.Projects
-                               .Select(project => new CreateProjectViewModel
-                               {
-                                   Id = project.Id,
-                                   Name = project.Name,
-                                   AssignedUsers = project.Users.Count,
-                                   DateUpdated = project.DateUpdated,
-                                   DateCreated = project.DateCreated
-                               }).ToList();
+            allProjects = (from project in DbContext.Projects
+                           where project.Archived == false
+                           select new CreateProjectViewModel
+                           {
+                               Id = project.Id,
+                               Name = project.Name,
+                               AssignedUsers = project.Users.Count,
+                               DateUpdated = project.DateUpdated,
+                               DateCreated = project.DateCreated,
+                               Archived = project.Archived
+                           }).ToList();
 
 
             return View(allProjects);
@@ -124,7 +138,7 @@ namespace BugTracker.Controllers
                user => user.Id == userId);
 
             projectToAddUsers.Users.Add(userToAdd);
-           
+
             DbContext.SaveChanges();
             return RedirectToAction(nameof(ProjectController.ListAllProjects));
         }
@@ -155,8 +169,10 @@ namespace BugTracker.Controllers
 
             List<Project> myProjects;
 
-            myProjects = currentUser.Projects.ToList();
-            
+            myProjects = (from project in currentUser.Projects
+                         where project.Archived == false
+                         select project).ToList();
+
             return View(myProjects);
         }
 

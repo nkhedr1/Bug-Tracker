@@ -59,7 +59,7 @@ namespace BugTracker.Controllers
             var ticketPriorityId = formData["TicketPriority"];
 
             var projectToAddTicketTo = DbContext.Projects.FirstOrDefault(
-               project => project.Id == id);
+               project => project.Id == id && project.Archived == false);
 
             var ticketDefaultStatus = DbContext.TicketStatuses.FirstOrDefault(
                status => status.Name == "Open");
@@ -89,6 +89,7 @@ namespace BugTracker.Controllers
 
             var allTickets =
                   (from ticket in DbContext.Tickets
+                   where ticket.Project.Archived == false
                    select new ViewAllTicketsViewModel
                    {
                        Id = ticket.Id,
@@ -119,6 +120,7 @@ namespace BugTracker.Controllers
             var myTickets =
                   (from ticket in DbContext.Tickets
                    where ticket.CreatedBy.Id == userId
+                   && ticket.Project.Archived == false
                    select new ViewAllTicketsViewModel
                    {
                        Id = ticket.Id,
@@ -145,7 +147,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var ticketModel = new ViewAllTicketsViewModel();
             ticketModel.Title = ticketToEdit.Title;
@@ -158,6 +160,7 @@ namespace BugTracker.Controllers
             ticketModel.TicketType = ticketToEdit.TicketType;
 
             var currentProjects = (from project in DbContext.Projects
+                                   where project.Archived == false
                                    select project
                           ).ToList();
 
@@ -211,7 +214,7 @@ namespace BugTracker.Controllers
         public ActionResult EditTicket(ViewAllTicketsViewModel ticketData, FormCollection formData)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == ticketData.Id);
+                ticket => ticket.Id == ticketData.Id && ticket.Project.Archived == false);
 
             var userId = User.Identity.GetUserId();
 
@@ -517,6 +520,7 @@ namespace BugTracker.Controllers
             var myTickets =
                   (from ticket in DbContext.Tickets
                    where ticket.AssignedToId == userId
+                   && ticket.Project.Archived == false
                    select new ViewAllTicketsViewModel
                    {
                        Id = ticket.Id,
@@ -533,10 +537,10 @@ namespace BugTracker.Controllers
 
                    }).ToList();
 
-
             var myAssignedProjects =
                   (from project in DbContext.Projects
-                   where project.Users.Any(usr => usr.Id == userId)
+                   where project.Archived == false
+                   && project.Users.Any(usr => usr.Id == userId)
                    select project)
                    .ToList();
 
@@ -554,7 +558,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var ticketModel = new ViewAllTicketsViewModel();
             ticketModel.Title = ticketToEdit.Title;
@@ -566,6 +570,7 @@ namespace BugTracker.Controllers
             ticketModel.TicketType = ticketToEdit.TicketType;
 
             var currentProjects = (from project in DbContext.Projects
+                                   where project.Archived == false
                                    select project
                           ).ToList();
 
@@ -591,7 +596,7 @@ namespace BugTracker.Controllers
         public ActionResult EditDeveloperTicket(ViewAllTicketsViewModel ticketData, FormCollection formData)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == ticketData.Id);
+                ticket => ticket.Id == ticketData.Id && ticket.Project.Archived == false);
 
             var ticketTypeId = formData["TicketType"];
             var ticketPriorityId = formData["TicketPriority"];
@@ -790,7 +795,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var ticketModel = new ViewAllTicketsViewModel();
             ticketModel.Title = ticketToEdit.Title;
@@ -802,6 +807,7 @@ namespace BugTracker.Controllers
             ticketModel.TicketType = ticketToEdit.TicketType;
 
             var currentProjects = (from project in DbContext.Projects
+                                   where project.Archived == false
                                    select project
                           ).ToList();
 
@@ -827,7 +833,7 @@ namespace BugTracker.Controllers
         public ActionResult EditMySubmitterTicket(ViewAllTicketsViewModel ticketData, FormCollection formData)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == ticketData.Id);
+                ticket => ticket.Id == ticketData.Id && ticket.Project.Archived == false);
 
             var ticketTypeId = formData["TicketType"];
             var ticketPriorityId = formData["TicketPriority"];
@@ -1031,7 +1037,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var comment = new Comment();
 
@@ -1079,7 +1085,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var comment = new Comment();
 
@@ -1127,7 +1133,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var comment = new Comment();
 
@@ -1195,7 +1201,7 @@ namespace BugTracker.Controllers
         public ActionResult AddAttatchmentAdminProjectManager(TicketAttachment attachData, HttpPostedFileBase UploadedFile, int id)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var userId = User.Identity.GetUserId();
 
@@ -1248,7 +1254,7 @@ namespace BugTracker.Controllers
         public ActionResult AddAttatchmentDeveloper(TicketAttachment attachData, HttpPostedFileBase UploadedFile, int id)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var userId = User.Identity.GetUserId();
 
@@ -1302,7 +1308,7 @@ namespace BugTracker.Controllers
         public ActionResult AddAttatchmentSubmitter(TicketAttachment attachData, HttpPostedFileBase UploadedFile, int id)
         {
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                 ticket => ticket.Id == id);
+                 ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var userId = User.Identity.GetUserId();
 
@@ -1348,18 +1354,18 @@ namespace BugTracker.Controllers
         public ActionResult ViewTicketDetails(int id)
         {
             var ticketToView = DbContext.Tickets.FirstOrDefault(
-                project => project.Id == id);
+                ticket => ticket.Id == id && ticket.Project.Archived == false);
 
 
             var ticketAttachments = (from attatch in DbContext.TicketAttachments
-                                     where attatch.TicketId == id
+                                     where attatch.TicketId == id && attatch.Ticket.Project.Archived == false
                                      select attatch
                            ).ToList();
 
             ViewBag.TicketAttachments = ticketAttachments;
 
             var ticketHistory = (from history in DbContext.TicketHistories
-                                 where history.TicketId == id
+                                 where history.TicketId == id && history.Ticket.Project.Archived == false
                                  select history
                           ).ToList();
 
@@ -1373,7 +1379,7 @@ namespace BugTracker.Controllers
         public ActionResult ViewTicketDetails(int id, FormCollection formData)
         {
             var ticketToView = DbContext.Tickets.FirstOrDefault(
-               project => project.Id == id);
+               ticket => ticket.Id == id && ticket.Project.Archived == false);
 
             var userId = User.Identity.GetUserId();
 

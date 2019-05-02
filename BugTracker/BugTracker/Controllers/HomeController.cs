@@ -30,23 +30,24 @@ namespace BugTracker.Controllers
             if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
             {
                 var allProjects = (from project in DbContext.Projects
+                                   where project.Archived == false
                                    select project
                              ).ToList();
 
                 ViewBag.AllProjects = allProjects.Count;
 
                 var openTickets = (from ticket in DbContext.Tickets
-                                   where ticket.TicketStatus.Name == "Open"
+                                   where ticket.TicketStatus.Name == "Open" && ticket.Project.Archived == false
                                    select ticket
                                 ).ToList();
 
                 var resolvedTickets = (from ticket in DbContext.Tickets
-                                       where ticket.TicketStatus.Name == "Resolved"
+                                       where ticket.TicketStatus.Name == "Resolved" && ticket.Project.Archived == false
                                        select ticket
                                ).ToList();
 
                 var rejectedTickets = (from ticket in DbContext.Tickets
-                                       where ticket.TicketStatus.Name == "Rejected"
+                                       where ticket.TicketStatus.Name == "Rejected" && ticket.Project.Archived == false
                                        select ticket
                               ).ToList();
 
@@ -60,11 +61,12 @@ namespace BugTracker.Controllers
             if (User.IsInRole("Developer"))
             {
                 var developerAssignedProjects = (from project in currentUser.Projects
+                                                 where project.Archived == false
                                                  select project
                                                 ).ToList();
 
-                var developerAssignedTickets = (from ticket in DbContext.Tickets
-                                                where ticket.AssignedToId == userId
+                var developerAssignedTickets = (from ticket in DbContext.Tickets 
+                                                where ticket.AssignedToId == userId && ticket.Project.Archived == false
                                                 select ticket
                                                ).ToList();
 
@@ -76,12 +78,13 @@ namespace BugTracker.Controllers
             if (User.IsInRole("Submitter"))
             {
                 var submitterAssignedProjects = (from project in currentUser.Projects
+                                                 where project.Archived == false
                                                  select project
                                                 ).ToList();
 
                 var submitterCreatedTickets = (from ticket in DbContext.Tickets
-                                                where ticket.CreatedById == userId
-                                                select ticket
+                                                where ticket.CreatedById == userId && ticket.Project.Archived == false
+                                               select ticket
                                               ).ToList();
 
                 ViewBag.CurrentSubmitterAssignedProjects = submitterAssignedProjects.Count;

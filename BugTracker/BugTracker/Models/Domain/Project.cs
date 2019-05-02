@@ -15,6 +15,7 @@ namespace BugTracker.Models.Domain
         public int TicketCount { get; set; }
         public virtual List<ApplicationUser> Users { get; set; }
         public virtual List<Ticket> Tickets { get; set; }
+        public bool Archived { get; set; }
 
         public Project()
         {

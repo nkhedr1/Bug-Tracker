@@ -27,7 +27,7 @@ namespace BugTracker.Controllers
 
             var ticketComments =
                  (from comment in DbContext.Comments
-                  where comment.TicketId == id
+                  where comment.TicketId == id && comment.Ticket.Project.Archived == false
                   select comment
                   ).ToList();
 

@@ -13,6 +13,7 @@ namespace BugTracker.Models.ViewModels
         public DateTime? DateUpdated { get; set; }
         public int AssignedUsers { get; set; }
         public int Tickets { get; set; }
+        public bool Archived { get; set; }
         public virtual List<ApplicationUser> Users { get; set; }
 
     }
