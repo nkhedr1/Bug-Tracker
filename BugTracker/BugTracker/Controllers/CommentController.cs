@@ -41,7 +41,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var commentToEdit = DbContext.Comments.FirstOrDefault(
-                comment => comment.Id == id);
+                comment => comment.Id == id && comment.Ticket.Project.Archived == false);
 
             return View(commentToEdit);
         }
@@ -51,7 +51,7 @@ namespace BugTracker.Controllers
         public ActionResult EditCommentAdminProjectManager(Comment commentData)
         {
             var commentToEdit = DbContext.Comments.FirstOrDefault(
-                comment => comment.Id == commentData.Id);
+                comment => comment.Id == commentData.Id && comment.Ticket.Project.Archived == false);
 
             commentToEdit.TicketComment = commentData.TicketComment;
             commentToEdit.DateUpdated = DateTime.Today;
@@ -80,7 +80,7 @@ namespace BugTracker.Controllers
         public ActionResult DeleteCommentAdminProjectManager(Comment commentData)
         {
             var commentToRemove = DbContext.Comments.FirstOrDefault(
-                comment => comment.Id == commentData.Id);
+                comment => comment.Id == commentData.Id && comment.Ticket.Project.Archived == false);
 
           
                 DbContext.Comments.Remove(commentToRemove);
@@ -96,7 +96,7 @@ namespace BugTracker.Controllers
 
             var ticketComments =
                  (from comment in DbContext.Comments
-                  where comment.TicketId == id && comment.UserId == userId
+                  where comment.TicketId == id && comment.UserId == userId && comment.Ticket.Project.Archived == false
                   select comment
                   ).ToList();
 
@@ -110,7 +110,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var commentToEdit = DbContext.Comments.FirstOrDefault(
-                comment => comment.Id == id && comment.UserId == userId);
+                comment => comment.Id == id && comment.UserId == userId && comment.Ticket.Project.Archived == false);
 
             return View(commentToEdit);
         }
@@ -120,7 +120,7 @@ namespace BugTracker.Controllers
         public ActionResult EditCommentDeveloperSubmitter(Comment commentData)
         {
             var commentToEdit = DbContext.Comments.FirstOrDefault(
-                comment => comment.Id == commentData.Id);
+                comment => comment.Id == commentData.Id && comment.Ticket.Project.Archived == false);
 
             commentToEdit.TicketComment = commentData.TicketComment;
             commentToEdit.DateUpdated = DateTime.Today;
@@ -128,7 +128,7 @@ namespace BugTracker.Controllers
             // Sending mail notification to developer for any change in the ticket
 
             var ticketToEdit = DbContext.Tickets.FirstOrDefault(
-                ticket => ticket.Id == commentData.TicketId);
+                ticket => ticket.Id == commentData.TicketId && ticket.Project.Archived == false);
 
             var ticketAssignedUserEmail =
                            (from p in DbContext.Users
@@ -151,7 +151,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var commentToRemove = DbContext.Comments.FirstOrDefault(
-                comment => comment.Id == commentData.Id && comment.UserId == userId);
+                comment => comment.Id == commentData.Id && comment.UserId == userId && comment.Ticket.Project.Archived == false);
 
 
             DbContext.Comments.Remove(commentToRemove);

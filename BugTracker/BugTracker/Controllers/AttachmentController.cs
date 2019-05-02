@@ -26,7 +26,7 @@ namespace BugTracker.Controllers
 
             var ticketAttachments =
                  (from attach in DbContext.TicketAttachments
-                  where attach.TicketId == id
+                  where attach.TicketId == id && attach.Ticket.Project.Archived == false
                   select attach
                   ).ToList();
 
@@ -38,7 +38,7 @@ namespace BugTracker.Controllers
         {
 
             var attachmentToRemove = DbContext.TicketAttachments.FirstOrDefault(
-                attach => attach.Id == attachData.Id);
+                attach => attach.Id == attachData.Id && attach.Ticket.Project.Archived == false);
 
 
             DbContext.TicketAttachments.Remove(attachmentToRemove);
@@ -54,7 +54,7 @@ namespace BugTracker.Controllers
 
             var ticketAttachments =
                  (from attach in DbContext.TicketAttachments
-                  where attach.TicketId == id && attach.UserId == userId
+                  where attach.TicketId == id && attach.UserId == userId && attach.Ticket.Project.Archived == false
                   select attach
                   ).ToList();
 
@@ -67,7 +67,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
 
             var attachmentToRemove = DbContext.TicketAttachments.FirstOrDefault(
-                attach => attach.Id == attachData.Id && attach.UserId == userId);
+                attach => attach.Id == attachData.Id && attach.UserId == userId && attach.Ticket.Project.Archived == false);
 
 
             DbContext.TicketAttachments.Remove(attachmentToRemove);
