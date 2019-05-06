@@ -1,0 +1,79 @@
+﻿@using BugTracker.Models
+@model LoginViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "DemoLogin";
+}
+
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Demo Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Page level plugin CSS-->
+    <link href="~/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/css/sb-admin.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-dark">
+
+    <header class="masthead" style="background-image: url('/img/about-bg.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="page-heading">
+                        <h1>Demo Log In</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="container">
+                <div class="card card-login mx-auto mt-8">
+                    <div class="card-header">Login</div>
+                    <div class="card-body">
+                        <section id="loginForm">
+                            <form method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Demo Login</label>
+                                    <select class="form-control" name="DemoLogin">
+
+                                        <option value="Admin">Admin</option>
+                                        <option value="ProjectManager">Project Manager</option>
+                                        <option value="Developer">Developer</option>
+                                        <option value="Submitter">Submitter</option>
+
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary mb-2" value="Save">Submit</button>
+                            </form>
+                        </section>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+</body>
+

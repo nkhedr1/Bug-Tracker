@@ -2007,6 +2007,7 @@
     <Content Include="Views\Comment\EditCommentDeveloperSubmitter.cshtml" />
     <Content Include="Views\Attachment\ListAllAttachmentsForTicketAdminProjectManager.cshtml" />
     <Content Include="Views\Attachment\ListAllAttachmentsForDeveloperSubmitter.cshtml" />
+    <Content Include="Views\Account\DemoLogin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

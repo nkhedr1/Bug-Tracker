@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using BugTracker.Models;
 using System.Configuration;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 
 namespace BugTracker.Controllers
 {
@@ -19,9 +20,11 @@ namespace BugTracker.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext DbContext;
 
         public AccountController()
         {
+            DbContext = new ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -78,6 +81,61 @@ namespace BugTracker.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToLocal(returnUrl);
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+                case SignInStatus.RequiresVerification:
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View(model);
+            }
+        }
+
+        [AllowAnonymous]
+        public ActionResult DemoLogin(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            
+            return View();
+        }
+
+        //
+        // POST: /Account/Login
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> DemoLogin(LoginViewModel model, string returnUrl, FormCollection formData)
+        {
+            var demoLogin = formData["DemoLogin"];
+            var demoEmail = "";
+            var demoPassword = "Password-1";
+
+            if (demoLogin == "Admin")
+            {
+                demoEmail = "adminDemoUser@mybugtracker.com";
+            }
+            else if (demoLogin == "ProjectManager")
+            {
+                demoEmail = "projectManagerDemoUser@mybugtracker.com";
+            }
+            else if (demoLogin == "Developer")
+            {
+                demoEmail = "developerDemoUser@mybugtracker.com";
+            }
+            else if (demoLogin == "Submitter")
+            {
+                demoEmail = "submitterDemoUser@mybugtracker.com";
+            }
+
+
+
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var result = await SignInManager.PasswordSignInAsync(demoEmail, demoPassword, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:

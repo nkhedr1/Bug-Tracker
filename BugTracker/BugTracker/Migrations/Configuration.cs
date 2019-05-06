@@ -164,6 +164,78 @@ namespace BugTracker.Migrations
                 context.TicketStatuses.Add(ticketStatusRejected);
             }
 
+            // Creating Demo Users
+            ApplicationUser adminDemoUser;
+
+            if (!context.Users.Any(
+                user => user.UserName == "adminDemoUser@mybugtracker.com"))
+            {
+                adminDemoUser = new ApplicationUser();
+                adminDemoUser.UserName = "adminDemoUser@mybugtracker.com";
+                adminDemoUser.Email = "adminDemoUser@mybugtracker.com";
+                userManager.Create(adminDemoUser, "Password-1");
+                userManager.AddToRole(adminDemoUser.Id, "Admin");
+            }
+            else
+            {
+                adminUser = context
+                    .Users
+                    .First(user => user.UserName == "adminDemoUser@mybugtracker.com");
+            }
+
+            ApplicationUser projectManagerDemoUser;
+
+            if (!context.Users.Any(
+                user => user.UserName == "projectManagerDemoUser@mybugtracker.com"))
+            {
+                projectManagerDemoUser = new ApplicationUser();
+                projectManagerDemoUser.UserName = "projectManagerDemoUser@mybugtracker.com";
+                projectManagerDemoUser.Email = "projectManagerDemoUser@mybugtracker.com";
+                userManager.Create(projectManagerDemoUser, "Password-1");
+                userManager.AddToRole(projectManagerDemoUser.Id, "Project Manager");
+            }
+            else
+            {
+                adminUser = context
+                    .Users
+                    .First(user => user.UserName == "projectManagerDemoUser@mybugtracker.com");
+            }
+
+            ApplicationUser developerDemoUser;
+
+            if (!context.Users.Any(
+                user => user.UserName == "developerDemoUser@mybugtracker.com"))
+            {
+                developerDemoUser = new ApplicationUser();
+                developerDemoUser.UserName = "developerDemoUser@mybugtracker.com";
+                developerDemoUser.Email = "developerDemoUser@mybugtracker.com";
+                userManager.Create(developerDemoUser, "Password-1");
+                userManager.AddToRole(developerDemoUser.Id, "Developer");
+            }
+            else
+            {
+                adminUser = context
+                    .Users
+                    .First(user => user.UserName == "developerDemoUser@mybugtracker.com");
+            }
+
+            ApplicationUser submitterDemoUser;
+
+            if (!context.Users.Any(
+                user => user.UserName == "submitterDemoUser@mybugtracker.com"))
+            {
+                submitterDemoUser = new ApplicationUser();
+                submitterDemoUser.UserName = "submitterDemoUser@mybugtracker.com";
+                submitterDemoUser.Email = "submitterDemoUser@mybugtracker.com";
+                userManager.Create(submitterDemoUser, "Password-1");
+                userManager.AddToRole(submitterDemoUser.Id, "Submitter");
+            }
+            else
+            {
+                adminUser = context
+                    .Users
+                    .First(user => user.UserName == "submitterDemoUser@mybugtracker.com");
+            }
         }
     }
 }
